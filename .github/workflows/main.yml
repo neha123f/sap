@@ -1,35 +1,21 @@
-name: SAP Commerce Cloud Build and Test
-
-on:
-  workflow_dispatch
+name: Connect to VM and Build SAP Commerce Project
+on: workflow_dispatch
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest  # You can choose a different runner if needed
-
+  connect-vm:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2  # This action checks out your repository code
-
-      - name: Set up SAP Commerce environment
-        run: |
-          # export SAP_USERNAME=admin
-          # export SAP_PASSWORD=nimda
-          # ./install.sh -r b2c_acc -d <path_to_hybris_zip> initialize
-
-      - name: Build SAP Commerce project
-        run: |
-           sudo su
-           cd hybries/hybris/bin/platform
-           ant clean all 
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v2
+      
+      - name: Connect to VM
+        uses: appleboy/ssh-action@master
         with:
-          name: test-results
-          path: hybris/bin/custom/myextension/build/test-results  
- 
-          
-
-
-   
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+           # Navigate to the project directory
+           cd /hybries/hybris/bin/platform
+           sudo su
+           . ./setantenv.sh
+           ant clean all
