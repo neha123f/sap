@@ -16,6 +16,4 @@ jobs:
           script: |
            # Navigate to the project directory
            cd /hybries/hybris/bin/platform
-           sudo su
-           . ./setantenv.sh
-           ant clean all
+           sudo -E bash -c '. ./setantenv.sh && ant clean all'
